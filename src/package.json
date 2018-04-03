@@ -1,0 +1,28 @@
+{
+  "name": "@angular/ngx-dynamic-modal",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ogrinishin/-angular-ngx-dynamic-modal.git/dist"
+  },
+  "author": {
+    "name": "Oleh Grinishin",
+    "email": "ogrinishin@gmail.com"
+  },
+  "keywords": [
+    "angular"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ogrinishin/@angular/ngx-dynamic-modal.git/issues"
+  },
+  "main": "ngx-dynamic-modal.umd.js",
+  "module": "ngx-dynamic-modal.js",
+  "jsnext:main": "ngx-dynamic-modal.js",
+  "typings": "ngx-dynamic-modal.d.ts",
+  "peerDependencies": {
+    "@angular/core": "^4.0.0",
+    "rxjs": "^5.1.0",
+    "zone.js": "^0.8.4"
+  }
+}
