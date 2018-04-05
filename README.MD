@@ -1,72 +1,70 @@
-# @angular/ngx-dynamic-modal
+# Angular dynamic modal
+Simple creating of modal from any (REALLY ANY) component
 
 ## Installation
-
-To install this library, run:
-
-```bash
-$ npm install @angular/ngx-dynamic-modal --save
+```sh
+npm install ngx-dynamic-modal --save
 ```
 
-## Consuming your library
+## Usage
+### Angular 2+
 
-Once you have published your library to npm, you can import your library in any Angular application by running:
-
-```bash
-$ npm install @angular/ngx-dynamic-modal
-```
-
-and then from your Angular `AppModule`:
-
+####Module with needed parent component
 ```typescript
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-
-import { AppComponent } from './app.component';
-
-// Import your library
-import { SampleModule } from '@angular/ngx-dynamic-modal';
-
+import {ModalModule} from 'ngx-dynamic-modal';
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-
-    // Specify your library as an import
-    LibraryModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    imports: [ModalModule]
 })
-export class AppModule { }
+export class AppModule{};
 ```
 
-Once your library is imported, you can use its components, directives and pipes in your Angular application:
+####Parent component
+```typescript
+import {ModalService} from 'ngx-dynamic-modal';
+import {ChildComponent} from './child-component';
 
-```xml
-<!-- You can now use your library component in app.component.html -->
-<h1>
-  {{title}}
-</h1>
-<sampleComponent></sampleComponent>
+@Component({
+    //...
+})
+export class ParentComponent {
+    constructor(private modalService: ModalService) {}
+
+    callback(res) {
+        console.log(res)
+    }
+
+    openModal() {
+        const data = {a: 1, b: 2};
+        this.modalService.addDynamicComponent(ChildComponent, {data}, (res) => {
+            this.callback(res)
+        })
+    }
+};
+```
+####Child component
+```typescript
+import {ModalComponent} from 'ngx-dynamic-modal';
+
+@Component({
+    //...
+})
+export class ChildComponent extends ModalExtended implements OnInit {
+
+    constructor(){
+        super();
+    }
+
+    ngOnInit() {
+        //get data
+        console.log(this.data); //{a: 1, b: 2}
+    }
+
+    onExit(){
+        //to run callback
+        this.applyCallback('any data');
+        //to destroy modal component
+        this.close();
+    }
+};
 ```
 
-## Development
-
-To generate all `*.js`, `*.d.ts` and `*.metadata.json` files:
-
-```bash
-$ npm run build
-```
-
-To lint all `*.ts` files:
-
-```bash
-$ npm run lint
-```
-
-## License
-
-MIT © [Oleh Grinishin](mailto:ogrinishin@gmail.com)

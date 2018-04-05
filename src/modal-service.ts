@@ -6,15 +6,12 @@ import {
     Injectable,
     Injector
 } from '@angular/core';
+import {ModalComponent} from './modal-component';
+import {ComponentFactory} from '@angular/core/src/linker/component_factory';
 
 export interface CreatedModals {
     component: ComponentRef<any>;
     modalElement: HTMLElement;
-}
-
-export interface ModalData {
-    data: any;
-    index: number;
 }
 
 @Injectable()
@@ -26,50 +23,38 @@ export class ModalService {
                 private factoryResolver: ComponentFactoryResolver) {
     }
 
-    addDynamicComponent(dynamicComponent: any, data?: any) {
-        const factory = this.factoryResolver.resolveComponentFactory(dynamicComponent),
-            index = this.componentRefArray.length,
-            component = factory.create(this.injector);
+    addDynamicComponent(dynamicComponent, data?: any, callback?: (response) => any) {
+        const factory: ComponentFactory<ModalComponent> = this.factoryResolver.resolveComponentFactory(ModalComponent);
 
-        (<any>component.instance).modalData = {data, index: index};
-        (<any>component.instance).service = this;
+        const index: number = this.componentRefArray.length;
+        const component: ComponentRef<ModalComponent> = factory.create(this.injector);
+
+        component.instance.data = data;
+        component.instance.dynamicComponent = dynamicComponent;
+        component.instance.index = index;
+        component.instance.service = this;
+        component.instance.callback = callback;
+
         this.applicationRef.attachView(component.hostView);
 
-        const domElem = (component.hostView as EmbeddedViewRef<any>)
+        const domElem: HTMLElement = (component.hostView as EmbeddedViewRef<any>)
             .rootNodes[0] as HTMLElement;
 
-        this.createDOMCover(domElem, index, component);
-    }
-
-    createDOMCover(domElem: HTMLElement, index: number, component: any) {
-        const modal = document.createElement('div');
-        modal.classList.add('modal');
-        modal.id = `modal-${index}`;
-        const modalBackground = document.createElement('div');
-        modalBackground.classList.add('modal__background');
-        const self = this;
-        modalBackground.addEventListener('click', function (e) {
-            if (Object.is((e.target as HTMLElement), this)) {
-                self.removeComponentFromBody(index);
-                this.parentElement.remove();
-            }
-        });
-        const modalWindow = document.createElement('div');
-        modalWindow.classList.add('modal__window');
-
-        modalWindow.appendChild(domElem);
-        modalBackground.appendChild(modalWindow);
-        modal.appendChild(modalBackground);
-        document.body.appendChild(modal);
+        document.body.appendChild(domElem);
         this.componentRefArray.push({
             component,
-            modalElement: modal
+            modalElement: domElem
         });
     }
 
-    removeComponentFromBody(i: number) {
+    removeComponentFromBody(i) {
         this.applicationRef.detachView(this.componentRefArray[i].component.hostView);
         this.componentRefArray[i].component.destroy();
         this.componentRefArray[i].modalElement.remove();
+        if (i === this.componentRefArray.length - 1) {
+            this.componentRefArray.splice(i, 1);
+        } else {
+            this.componentRefArray[i] = undefined;
+        }
     }
 }

@@ -18,9 +18,9 @@
     "types": []
   },
   "angularCompilerOptions": {
-    "annotateForClosureCompiler": true,
-    "strictMetadataEmit": true,
-    "skipTemplateCodegen": true,
+    "annotateForClosureCompiler": false,
+    "strictMetadataEmit": false,
+    "skipTemplateCodegen": false,
     "flatModuleOutFile": "ngx-dynamic-modal.js",
     "flatModuleId": "@angular/ngx-dynamic-modal"
   },
